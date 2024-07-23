@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Todo App</title>
+    <script>
+        async function fetchTodos() {
+            const response = await fetch('/todos/');
+            const todos = await response.json();
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+            todos.forEach(todo => {
+                const todoItem = document.createElement('li');
+                todoItem.innerText = `${todo.title}: ${todo.description}`;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        async function addTodo() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const response = await fetch('/todos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, description })
+            });
+            const todo = await response.json();
+            console.log('Todo added:', todo);
+            fetchTodos();
+        }
+
+        async function deleteTodo() {
+            const id = document.getElementById('delete-id').value;
+            const response = await fetch(`/todos/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            console.log(result);
+            fetchTodos();
+        }
+
+        async function updateTodo() {
+            const id = document.getElementById('update-id').value;
+            const title = document.getElementById('update-title').value;
+            const description = document.getElementById('update-description').value;
+            const completed = document.getElementById('update-completed').checked;
+            const response = await fetch(`/todos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, description, completed })
+            });
+            const todo = await response.json();
+            console.log('Todo updated:', todo);
+            fetchTodos();
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchTodos);
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Flask Todo App</h1>
+    <ul id="todo-list"></ul>
+    <h2>Add Todo</h2>
+    <input type="text" id="title" placeholder="Title">
+    <input type="text" id="description" placeholder="Description">
+    <button onclick="addTodo()">Add</button>
+    <h2>Update Todo</h2>
+    <input type="number" id="update-id" placeholder="ID">
+    <input type="text" id="update-title" placeholder="Title">
+    <input type="text" id="update-description" placeholder="Description">
+    <label>
+        Completed:
+        <input type="checkbox" id="update-completed">
+    </label>
+    <button onclick="updateTodo()">Update</button>
+    <h2>Delete Todo</h2>
+    <input type="number" id="delete-id" placeholder="ID">
+    <button onclick="deleteTodo()">Delete</button>
+</body>
+</html>

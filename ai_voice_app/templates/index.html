@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Girlfriend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #chatbox {
+            width: 400px;
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 0 auto;
+        }
+        #input {
+            width: 300px;
+            margin-top: 20px;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+        #submit {
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chat with your AI Girlfriend</h2>
+    <div id="chatbox">
+        <!-- Chat messages will appear here -->
+    </div>
+    <form id="message-form" action="/send-message" method="post">
+        <input type="text" id="input" name="message" placeholder="Type your message here...">
+        <input type="submit" id="submit" value="Send">
+    </form>
+
+    <script>
+        // Auto-scroll chatbox to bottom
+        const chatbox = document.getElementById('chatbox');
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        // Function to append message to chatbox
+        function appendMessage(message) {
+            const newMessage = document.createElement('div');
+            newMessage.textContent = message;
+            chatbox.appendChild(newMessage);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Submit form via AJAX
+        const form = document.getElementById('message-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            fetch('/send-message', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage("You: " + formData.get('message'));
+                appendMessage("AI Girlfriend: " + data.reply);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            form.reset();
+        });
+    </script>
+</body>
+</html>

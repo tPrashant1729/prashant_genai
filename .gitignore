@@ -1,0 +1,62 @@
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+
+# Ignore environment variables files
+*.env
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Streamlit secrets
+.streamlit/secrets.toml
+
+# Ignore FAISS index files
+faiss_index/index.*
+
+# Ignore specific environment and configuration files
+.chainlit/
+.streamlit/
+
+# Ignore node_modules if any Node.js projects
+node_modules/
+
+# Ignore virtual environments
+venv/
+.env/
+.env.bak/
+env/
+env.bak/
+
+# Ignore specific project temporary or output files
+ai_voice_app/__pycache__/
+ai_voice_app/*.pyc
+ai_voice_app/*.pyo
+Updated-Langchain-main/__pycache__/
+Updated-Langchain-main/*.pyc
+Updated-Langchain-main/*.pyo
+flask_app/__pycache__/
+flask_app/*.pyc
+flask_app/*.pyo
+flask_todo/__pycache__/
+flask_todo/*.pyc
+flask_todo/*.pyo
+flask_todo/instance/todos.db
+conversational-chatbot-groq-main/__pycache__/
+conversational-chatbot-groq-main/*.pyc
+conversational-chatbot-groq-main/*.pyo
+
+# Ignore config files
+.chainlit/config.toml
+
+# Ignore translation files
+.chainlit/translations/
+
+# Ignore temporary files and logs
+*.log
+*.tmp
+*.temp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer</title>
+</head>
+
+<body>
+    <h1>Answer</h1>
+    <p>{{ answer }}</p>
+    <h2>Sources</h2>
+    {% for doc in source_documents %}
+    <div>
+        <h3>Source {{ loop.index }}:</h3>
+        <p>{{ doc.page_content }}</p>
+    </div>
+    {% endfor %}
+</body>
+
+</html>
