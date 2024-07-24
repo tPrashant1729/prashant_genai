@@ -6,13 +6,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from flask import Flask, render_template, request, jsonify
-import uuid
 from typing import IO
 from io import BytesIO
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from playsound import playsound
-
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 client = ElevenLabs(
     api_key=ELEVENLABS_API_KEY,
@@ -22,7 +20,7 @@ load_dotenv()
 groq_api_key = os.getenv('GROQ_API_KEY')
 
 # model = ChatGroq(model="llama3-groq-8b-8192-tool-use-preview")
-model = ChatGroq(model="llama3-8b-8192", streaming= True)
+model = ChatGroq(model="llama3-8b-8192")
 
 def get_llm_response(text_prompt):
     prompt_template = ChatPromptTemplate.from_messages([
@@ -97,7 +95,7 @@ def favicon():
 @app.route('/send-message', methods=['POST'])
 def send_message():
     user_message = request.form['message']
-    get_llm_response(user_message)
+    message = get_llm_response(user_message)
     text_to_speech_stream(message)
     return jsonify({'reply': message})
 
@@ -105,25 +103,5 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 #----------------------------------------------------------------------------------------------------------------------------------------
-
-
-def stream(input_text):
-        completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[
-            {"role": "system", "content": "You're an assistant."},
-            {"role": "user", "content": f"{prompt(input_text)}"},
-        ], stream=True, max_tokens=500, temperature=0)
-        for line in completion:
-            if 'content' in line['choices'][0]['delta']:
-                yield line['choices'][0]['delta']['content']
-
-@app.route('/completion', methods=['GET', 'POST'])
-def completion_api():
-    if request.method == "POST":
-        data = request.form
-        input_text = data['input_text']
-        return Response(stream(input_text), mimetype='text/event-stream')
-    else:
-        return Response(None, mimetype='text/event-stream')
-    
 
 
