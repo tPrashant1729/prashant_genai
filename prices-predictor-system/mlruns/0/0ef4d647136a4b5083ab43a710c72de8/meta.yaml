@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/ayushsingh/Desktop/end-to-end-production-grade-projects/prices-predictor-system/mlruns/0/0ef4d647136a4b5083ab43a710c72de8/artifacts
+end_time: 1728296723227
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0ef4d647136a4b5083ab43a710c72de8
+run_name: rare-rook-672
+run_uuid: 0ef4d647136a4b5083ab43a710c72de8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1728296722808
+status: 3
+tags: []
+user_id: dnk131

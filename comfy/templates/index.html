@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generation UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        #promptInput {
+            width: calc(100% - 2rem);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        #generateBtn, #cancelBtn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-width: 150px;
+        }
+        #generateBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #generateBtn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        #cancelBtn {
+            background-color: #f44336;
+            color: white;
+            display: none;
+        }
+        #cancelBtn:hover {
+            background-color: #da190b;
+            transform: translateY(-2px);
+        }
+        #status {
+            margin-top: 1rem;
+            font-style: italic;
+            font-size: 1.1rem;
+            min-height: 1.5em;
+        }
+        #generatedImage {
+            max-width: 100%;
+            max-height: 500px;
+            margin-top: 1.5rem;
+            display: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Generation</h1>
+        <input type="text" id="promptInput" placeholder="Enter your prompt here">
+        <div class="button-container">
+            <button id="generateBtn">Generate Image</button>
+            <button id="cancelBtn">Cancel Generation</button>
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+        <p id="status"></p>
+        <img id="generatedImage" alt="Generated Image">
+    </div>
+
+    <script>
+        const socket = io();
+        const generateBtn = document.getElementById('generateBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const promptInput = document.getElementById('promptInput');
+        const status = document.getElementById('status');
+        const generatedImage = document.getElementById('generatedImage');
+        const progressBar = document.getElementById('progressBar');
+
+        let isGenerating = false;
+
+        generateBtn.addEventListener('click', () => {
+            if (isGenerating) return;
+            
+            const prompt = promptInput.value.trim();
+            if (prompt === '') {
+                status.textContent = 'Please enter a prompt.';
+                return;
+            }
+
+            isGenerating = true;
+            generateBtn.disabled = true;
+            cancelBtn.style.display = 'inline-block';
+            status.textContent = 'Generating image...';
+            generatedImage.style.display = 'none';
+            progressBar.style.width = '0%';
+
+            socket.emit('generate_image', { prompt: prompt });
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            if (!isGenerating) return;
+
+            socket.emit('cancel_generation');
+            resetUI();
+            status.textContent = 'Image generation cancelled.';
+        });
+
+        socket.on('generation_progress', (data) => {
+            status.textContent = `Progress: ${data.progress}%`;
+            progressBar.style.width = `${data.progress}%`;
+        });
+
+        socket.on('generation_complete', (data) => {
+            resetUI();
+            status.textContent = 'Image generation complete!';
+            generatedImage.src = data.image_url;
+            generatedImage.style.display = 'block';
+        });
+
+        socket.on('generation_error', (data) => {
+            resetUI();
+            status.textContent = `Error: ${data.error}`;
+        });
+
+        function resetUI() {
+            isGenerating = false;
+            generateBtn.disabled = false;
+            cancelBtn.style.display = 'none';
+            progressBar.style.width = '0%';
+        }
+    </script>
+</body>
+</html>
