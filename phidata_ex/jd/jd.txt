@@ -1,0 +1,69 @@
+Job Overview
+
+With AI / ML gaining stronghold in improving human lives, we have opportunities wherein good AI/ML experienced engineers can contribute to building a more improved life experience.
+Looking for ambitious, achievement-oriented technocrats with strong work experience in AI/ML related tools & technologies.
+
+
+Experience:
+
+3 – 8 years of experience in AI/ML technologies more focused on image processing
+
+
+Skills & Competencies:
+
+Python, PyTorch
+TensorFlow
+Deep Learning
+AI/ML
+
+
+Required Skills & Qualifications:
+
+B.Tech/B.E/M.Tech/M.E in Computer Science stream preferred.
+Strong proficiency in TensorFlow, PyTorch, and Python
+Deep understanding of GPU, CPU and AI Accelerator architectures, with hands-on experience in performance tuning for ML workloads.
+Experience / Exposure to AI based solutions for Cameras/OpenCV in Android Environment.
+Ability to work in a fast-paced, collaborative environment, with excellent communication and teamwork skills.
+Strong understanding of Deep Learning
+
+
+Data Scientist Responsibilities
+
+Undertaking data collection, preprocessing and analysis
+Building models to address business problems
+Presenting information using data visualization techniques
+Work with stakeholders throughout the organization to identify opportunities for leveraging company data to drive business solutions
+Mine and analyze data from company databases to drive optimization and improvement of product development, marketing techniques and business strategies.
+Assess the effectiveness and accuracy of new data sources and data gathering techniques.
+Develop custom data models and algorithms to apply to data sets.
+Use predictive modelling to increase and optimize customer experiences, revenue generation, ad targeting and other business outcomes.
+Develop company A/B testing framework and test model quality.
+Coordinate with different functional teams to implement models and monitor outcomes.
+Develop processes and tools to monitor and analyze model performance and data accuracy
+
+
+
+
+
+
+
+
+
+
+enter jd 
+
+enter resume
+
+parse resume
+
+find ats score based on resume and jd
+
+give suggestions to improve ats
+
+based on suggestions rewrite the new_resume.
+
+prepare questions related to jd (in context with experience) one by one with websearch
+
+find the answers, prepare the answer for the question you have asked by yourself and from web
+
+

@@ -1,40 +1,46 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
-from groq import Groq
-from dotenv import load_dotenv
-import os
-load_dotenv()
-groq_api_key = os.environ.get('GROQ_API_KEY')
-client = Groq(api_key=groq_api_key)
+import requests
 
-# Initialize FastAPI client
 app = FastAPI()
 
-# Create class with pydantic BaseModel
-class TranslationRequest(BaseModel):
-    input_str: str
+OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Chat App API"}
+
+class ChatRequest(BaseModel):
+    prompt: str
+
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    payload = {
+        "model": "dolphin-llama3:8b",  # Replace with your model
+        "prompt": request.prompt,
+        "stream": False
+    }
+    response = requests.post(OLLAMA_URL, json=payload)
+    return response.json()
 
 
-def translate_text(input_str):
-    completion = client.chat.completions.create(
-    model="llama3-8b-8192",
-    messages=[
-        {
-            "role": "system",
-            "content": "You are an expert translator who translates text from english to french and only return translated text",
-        },
-        {"role": "user", "content": input_str}
-    ],
-    )
-    return completion.choices[0].message.content
+# from flask import Flask, request, jsonify
 
+# app = Flask(__name__)
+# VALID_API_KEYS = {"aeb2a4aeb7932a7fa420e076ee5157f68939ffc18b77935f2f73df69fcf33419"}
 
-@app.post("/translate/")  # This line decorates 'translate' as a POST endpoint
-async def translate(request: TranslationRequest):
-    try:
-        # Call your translation function
-        translated_text = translate_text(request.input_str)
-        return {"translated_text": translated_text}
-    except Exception as e:
-        # Handle exceptions or errors during translation
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.before_request
+# def verify_api_key():
+#     api_key = "aeb2a4aeb7932a7fa420e076ee5157f68939ffc18b77935f2f73df69fcf33419"
+    
+#     if api_key not in VALID_API_KEYS:
+#         return jsonify({"error": "Invalid API key"}), 403
+
+# @app.route("/api/generate", methods=["POST"])
+# def generate():
+
+#     # Forward the request to the Ollama server
+#     return jsonify({"response": "Accessed Ollama successfully!"})
+
+# if __name__ == "__main__":
+#     app.run(port=5003)

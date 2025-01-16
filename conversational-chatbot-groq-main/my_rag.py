@@ -1,28 +1,9 @@
-import streamlit as st
-import os
-from groq import Groq
-import random
 import requests
 from bs4 import BeautifulSoup
-from langchain.chains import ConversationChain, LLMChain
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    MessagesPlaceholder,
-)
-from langchain_community.document_loaders import AsyncChromiumLoader
-from langchain_community.document_transformers import BeautifulSoupTransformer
 
-from langchain_core.messages import SystemMessage
-from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from langchain_groq import ChatGroq
-from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv()) # read local .env file
-from langchain_community.document_loaders import WikipediaLoader, WebBaseLoader, TextLoader
 
-import requests
-from bs4 import BeautifulSoup
 
 def fetch_content(url):
     response = requests.get(url)
