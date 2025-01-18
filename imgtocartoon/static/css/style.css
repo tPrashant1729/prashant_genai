@@ -1,0 +1,18 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    margin: 20px;
+}
+
+img {
+    max-width: 300px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+
+#result, #comparison {
+    margin-top: 20px;
+}

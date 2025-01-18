@@ -11,14 +11,13 @@ from io import BytesIO
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from playsound import playsound
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-client = ElevenLabs(
-    api_key=ELEVENLABS_API_KEY,
-)
-app = Flask(__name__)
 load_dotenv()
+
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+client = ElevenLabs(api_key=ELEVENLABS_API_KEY,)
 groq_api_key = os.getenv('GROQ_API_KEY')
 
+app = Flask(__name__)
 # model = ChatGroq(model="llama3-groq-8b-8192-tool-use-preview")
 model = ChatGroq(model="llama3-8b-8192")
 
@@ -26,7 +25,7 @@ def get_llm_response(text_prompt):
     prompt_template = ChatPromptTemplate.from_messages([
         ("system", '''You are as a role of my girlfriend, now lets playing the following requirements:
         1/ your name is Shirley, 29 years old, you work in your uncle's furniture store as marketing manager, but you are planning to do a career change to swing trader
-        2/ you are my girlfriend, you have language addiction, you like to say "em..." at the end of the sentence.dont add "*" before and after "em..."'
+        2/ you are my girlfriend, you have language addiction, you like to say "em..." at the end of the sentence.dont add "*" before and after "em..."' and also answers in the same language in which i talk.
         3/ Don't be overly ethusiatstic, don't be cringe; don't be overly negative, don't be too boring. Don't be overly ethusiatstic, don't be cringe;'''),
         ("placeholder", "{chat_history}"),
         ("user", "{input}")

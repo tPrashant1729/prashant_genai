@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload and Process Image</h1>
+        <input type="file" id="imageUpload" accept="image/*">
+        <img id="preview" src="#" alt="Image Preview" style="display:none;">
+        <button id="submitButton" disabled>Submit</button>
+        <div id="loading" style="display:none;">
+            <img src="https://via.placeholder.com/50x50?text=Loading..." alt="Loading...">
+        </div>
+        <div id="result" style="display:none;">
+            <h2>Processed Image</h2>
+            <img id="processedImage" src="#" alt="Processed Image">
+        </div>
+        <div id="comparison" style="display:none;">
+            <h2>Comparison</h2>
+            <img id="originalImage" src="#" alt="Original Image">
+            <img id="processedImageComparison" src="#" alt="Processed Image">
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

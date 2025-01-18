@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Candidate Information",
+  "type": "object",
+  "required": ["personalInfo", "roleInfo", "resume"],
+  "properties": {
+    "personalInfo": {
+      "type": "object",
+      "required": ["fullName", "email", "phone"],
+      "properties": {
+        "fullName": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string", "pattern": "^[+0-9\\-\\s]+$" },
+        "linkedin": { "type": "string", "format": "uri", "optional": true },
+        "github": { "type": "string", "format": "uri", "optional": true },
+        "portfolio": { "type": "string", "format": "uri", "optional": true }
+      }
+    },
+    "roleInfo": {
+      "type": "object",
+      "required": ["position", "locationPreference"],
+      "properties": {
+        "position": { "type": "string", "minLength": 1 },
+        "locationPreference": { "type": "string" },
+        "expectedSalary": { "type": "number", "optional": true },
+        "willingToRelocate": { "type": "boolean", "optional": true }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["degree", "field", "institution", "graduationYear"],
+        "properties": {
+          "degree": { "type": "string" },
+          "field": { "type": "string" },
+          "institution": { "type": "string" },
+          "graduationYear": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2100
+          }
+        }
+      }
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["company", "title", "startDate", "endDate"],
+        "properties": {
+          "company": { "type": "string" },
+          "title": { "type": "string" },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "achievements": { "type": "string", "optional": true }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "issuer", "date"],
+        "properties": {
+          "name": { "type": "string" },
+          "issuer": { "type": "string" },
+          "date": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "resume": { "type": "string", "contentEncoding": "base64" },
+    "coverLetter": { "type": "string", "optional": true },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "contactInfo"],
+        "properties": {
+          "name": { "type": "string" },
+          "contactInfo": { "type": "string" }
+        }
+      },
+      "optional": true
+    },
+    "misc": {
+      "type": "object",
+      "required": ["availability", "visaRequirements"],
+      "properties": {
+        "availability": { "type": "string" },
+        "visaRequirements": { "type": "string" },
+        "comments": { "type": "string", "optional": true }
+      }
+    }
+  }
+}

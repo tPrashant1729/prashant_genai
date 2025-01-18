@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>OCR App</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Image to Text Conversion</h1>
+        <form id="uploadForm" action="/process-image/" method="post" enctype="multipart/form-data">
+            <label for="fileInput">Upload an Image</label>
+            <input type="file" id="fileInput" name="image" accept="image/*">
+            <p>OR</p>
+            <label for="urlInput">Enter Image URL</label>
+            <input type="text" id="urlInput" name="image_url" placeholder="https://example.com/image.jpg">
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result">
+            <h2>Extracted Text</h2>
+            <div id="markdownOutput"></div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
+            
