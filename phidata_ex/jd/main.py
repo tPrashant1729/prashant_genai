@@ -244,16 +244,19 @@ st.write("Prepare for your interviews with tailored questions and feedback.")
 if st.button("Prepare for Interview") and st.session_state.jd:
     with st.spinner('''Wait a minute :) preparing interview questions for you... '''):
         # Fetch and structure questions
-        search_response: RunResponse = search_agent.run(
-            f"Create a list of questions for the job role described below:\n{st.session_state.jd}"
-        )
+        try:
+            search_response: RunResponse = search_agent.run(
+                f"Create a list of questions for the job role described below:\n{st.session_state.jd}"
+            )
 
-        structured_response: RunResponse = pydantic_agent.run(
-            f"Structure the questions in the specified Pydantic model format:\n{search_response.content}"
-        )
+            structured_response: RunResponse = pydantic_agent.run(
+                f"Structure the questions in the specified Pydantic model format:\n{search_response.content}"
+            )
+        except Exception as e:
+            st.error(f"Unexpected error: {str(e)}")    
 
         st.session_state.questions = structured_response.content.questions
-        st.success("Questions prepared successfully. Click 'Start Interview' to begin.")
+        st.success("Questions prepared successfully.")
 
 if 'questions' in st.session_state:
     # Start interview
