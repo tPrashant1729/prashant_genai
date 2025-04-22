@@ -178,7 +178,7 @@ class EvaluationResponse(BaseModel):
 # Agent that uses JSON mode
 # Agent setup
 search_agent = Agent(
-    model=Groq(id="llama-3.1-8b-instant"),
+    model=Groq(id="llama-3.3-70b-versatile"),
     tools=[DuckDuckGo()],
     markdown=True,
     description="Retrieve and structure interview questions from the web."
