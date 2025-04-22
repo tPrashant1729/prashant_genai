@@ -1,0 +1,6 @@
+{
+  "[csv]": {
+    "editor.inlayHints.maximumLength": 0,
+    "editor.wordWrap": "off"
+  }
+}

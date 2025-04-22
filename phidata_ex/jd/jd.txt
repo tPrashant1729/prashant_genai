@@ -1,5 +1,3 @@
-Job Overview
-
 With AI / ML gaining stronghold in improving human lives, we have opportunities wherein good AI/ML experienced engineers can contribute to building a more improved life experience.
 Looking for ambitious, achievement-oriented technocrats with strong work experience in AI/ML related tools & technologies.
 
@@ -40,30 +38,3 @@ Use predictive modelling to increase and optimize customer experiences, revenue 
 Develop company A/B testing framework and test model quality.
 Coordinate with different functional teams to implement models and monitor outcomes.
 Develop processes and tools to monitor and analyze model performance and data accuracy
-
-
-
-
-
-
-
-
-
-
-enter jd 
-
-enter resume
-
-parse resume
-
-find ats score based on resume and jd
-
-give suggestions to improve ats
-
-based on suggestions rewrite the new_resume.
-
-prepare questions related to jd (in context with experience) one by one with websearch
-
-find the answers, prepare the answer for the question you have asked by yourself and from web
-
-

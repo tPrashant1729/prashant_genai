@@ -1,12 +1,26 @@
+import os
 import streamlit as st
 from phi.agent import Agent, RunResponse
 from phi.model.groq import Groq
 from phi.tools.duckduckgo import DuckDuckGo
 import tempfile
 from markitdown import MarkItDown
+from pydantic import BaseModel, Field
+from typing import List, Literal, Optional
+from dotenv import load_dotenv
+
+# Load .env file if it exists
+load_dotenv()
+
+# List of possible API key names
+POSSIBLE_API_KEYS = [
+    "GROQ_API_KEY", "GROQ_KEY", "GROQAPIKEY", "GROQ_API", "GROQ_SECRET",
+    "GROQ_TOKEN", "GROQ_ACCESS_TOKEN"
+]
+
 
 st.title("Improve Your Self")
-st.write("This is a simple example to help you prepare better.")
+st.caption("This is a simple example to help you prepare better.")
 
 # Initialize session state
 if 'jd' not in st.session_state:
@@ -27,9 +41,41 @@ def reset_session_state():
     st.session_state.user_answers = []
     st.session_state.interview_complete = False
 
+
 # Initialize session state variables
 if 'current_question_index' not in st.session_state:
     reset_session_state()
+
+def find_groq_api_key():
+    """
+    Search for the Groq API key in different sources:
+    1. User-provided input in the Streamlit UI.
+    2. .env file in the project directory.
+    3. System environment variables (Linux/macOS: .bashrc/.zshrc, Windows: System Env).
+    """
+    
+    # 1️⃣ Check user input in Streamlit UI
+    api_key = st.text_input("Enter your Groq API Key:", type="password")
+    if api_key:
+        return api_key  # User input has the highest priority
+
+    # 2️⃣ Check .env file and environment variables for different key names
+    for key_name in POSSIBLE_API_KEYS:
+        api_key = os.getenv(key_name) or os.environ.get(key_name)
+        if api_key:
+            return api_key
+
+    # If no key is found
+    return None
+
+with st.sidebar:
+    st.header("🔑 API Configuration")
+    api_key = find_groq_api_key()
+
+    if api_key:
+        st.success("✅ API Key Found!")
+    else:
+        st.error("❌ No API Key Found! Please provide one in the UI, .env file, or system environment.")
 
 ats_agent = Agent(
     name="ATS Agent",
@@ -51,8 +97,7 @@ st.session_state.jd = st.text_area("Enter your Job Description (JD) here", st.se
 if st.session_state.jd:
     st.markdown("### Job Description")
     st.markdown(st.session_state.jd)
-else:
-    st.error("Please enter the Job Description.")
+
 
 # File uploader for resume
 uploaded_file = st.file_uploader("Upload your resume (PDF):", type="pdf")
@@ -79,8 +124,6 @@ if uploaded_file is not None:
 if st.session_state.text:
     st.markdown("### Extracted Resume Text")
     st.markdown(st.session_state.text)
-else:
-    st.warning("Please upload your resume to proceed.")
 
 # Function to stream agent's response
 def stream_agent_response(prompt, agent: Agent):
@@ -110,6 +153,10 @@ if st.session_state.jd and st.session_state.text and not st.session_state.ats_ca
 
 # Rewrite Resume functionality
 if st.button("Rewrite Resume"):
+    if not st.session_state.jd:
+        st.error("Please enter a job description before rewriting the resume.")
+    if not st.session_state.text: 
+        st.error("Please upload a resume before rewriting it.")
     if st.session_state.suggestion:
 
         rewrite_prompt = (
@@ -130,10 +177,8 @@ if st.button("Rewrite Resume"):
         # Save rewritten resume
         st.session_state.rewritten_resume = rewrite_text
     else:
-        st.error("No suggestions available. Please ensure ATS analysis is complete before rewriting.")
+        st.error("No suggestions available. Please ensure that you have provided the Job description and uploaded the resume before rewriting.")
 
-from pydantic import BaseModel, Field
-from typing import List, Literal, Optional
 
 class InterviewQuestion(BaseModel):
     question: str = Field(..., description="The text of the interview question.")
@@ -168,20 +213,13 @@ class EvaluationResponse(BaseModel):
     feedback: str = Field(..., description="Short feedback on the user's answer.")
     correct_answer: str = Field(..., description="The correct answer to the question.")
 
-# json_mode_agent_decription = """ Act as a professional job interview assistant. Retrieve all relevant interview questions from the web for the specified job role. Tailor the questions based on:
-
-# The required experience level of the candidate in the field (e.g., entry-level, mid-level, senior).
-# The technical skills and tech stacks mentioned in the job description.
-# General and behavioral competencies typically expected for the role.
-# Ensure the questions cover a mix of technical expertise, problem-solving skills, and situational scenarios that are aligned with the responsibilities of the role. Provide a comprehensive list of questions categorized by type (technical, behavioral, situational) and difficulty level (beginner, intermediate, advanced) """
-
-# Agent that uses JSON mode
 # Agent setup
 search_agent = Agent(
     model=Groq(id="llama-3.3-70b-versatile"),
     tools=[DuckDuckGo()],
     markdown=True,
-    description="Retrieve and structure interview questions from the web."
+    description="Retrieve and structure interview questions from the web.",
+    
 )
 
 # Agent that uses JSON mode
@@ -203,36 +241,30 @@ score_agent = Agent(
 st.markdown("### Interactive Interview Preparation")
 st.write("Prepare for your interviews with tailored questions and feedback.")
 
-# json_mode_response: RunResponse = json_mode_agent.run(f"create a list of questions from the web search tool for below job description:\n {st.session_state.jd}")
-
-# groq_model = "llama-3.3-70b-versatile"
-# response: RunResponse = pydantic_agent.run(f"just list out the questions in the response model format from the given text:\n{json_mode_response.content}")
-
-# for question in response.content.questions:
-#     print(question.question)
-
 if st.button("Prepare for Interview") and st.session_state.jd:
-    # Fetch and structure questions
-    search_response: RunResponse = search_agent.run(
-        f"Create a list of questions for the job role described below:\n{st.session_state.jd}"
-    )
+    with st.spinner('''Wait a minute :) preparing interview questions for you... '''):
+        # Fetch and structure questions
+        try:
+            search_response: RunResponse = search_agent.run(
+                f"Create a list of questions for the job role described below:\n{st.session_state.jd}"
+            )
 
-    structured_response: RunResponse = pydantic_agent.run(
-        f"Structure the questions in the specified Pydantic model format:\n{search_response.content}"
-    )
+            structured_response: RunResponse = pydantic_agent.run(
+                f"Structure the questions in the specified Pydantic model format:\n{search_response.content}"
+            )
+        except Exception as e:
+            st.error(f"Unexpected error: {str(e)}")    
 
-    st.session_state.questions = structured_response.content.questions
-    st.success("Questions prepared successfully. Click 'Start Interview' to begin.")
+        st.session_state.questions = structured_response.content.questions
+        st.success("Questions prepared successfully.")
 
 if 'questions' in st.session_state:
     # Start interview
-    if st.button("Start Interview"):
-        reset_session_state()
 
     if st.session_state.current_question_index < len(st.session_state.questions):
         # Display current question
         current_question = st.session_state.questions[st.session_state.current_question_index]
-        st.markdown(f"### Question {st.session_state.current_question_index + 1}: {current_question.question}")
+        st.markdown(f"### Question-{st.session_state.current_question_index + 1}:\n{current_question.question}")
         answer = st.text_area("Your Answer:", "")
 
         if st.button("Submit Answer"):
@@ -249,6 +281,7 @@ if 'questions' in st.session_state:
 
             # Extract score and feedback
             st.session_state.scores.append(eval_response.content.score)
+            st.markdown(f"### Score: {eval_response.content.score}/10")
             st.markdown(f"### Feedback:\n{eval_response.content.feedback}")
             st.markdown(f"### Correct_answer:\n{eval_response.content.correct_answer}")
             st.session_state.show_next_question = True
@@ -258,6 +291,7 @@ if 'questions' in st.session_state:
             if st.button("Next Question"):
                 st.session_state.current_question_index += 1
                 st.session_state.show_next_question = False
+                st.rerun()
     # Skip all functionality
     if st.button("Skip All Questions"):
         st.session_state.interview_complete = True
@@ -271,6 +305,10 @@ if 'questions' in st.session_state:
         total_score = sum(st.session_state.scores)
         st.markdown("## Interview Complete")
         st.markdown(f"Your Total Score: {total_score}/{len(st.session_state.questions) * 10}")
+
+    if st.button("Reset Questions Score"):
+        reset_session_state()
+        st.rerun()
 
 else:
     st.info("Enter a job description and click 'Prepare for Interview' to start.")
